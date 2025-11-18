@@ -1,0 +1,50 @@
+html code :
+  <button mat-raised-button class="submit" color="primary" (click)="initializePayment(Amount)">Submit</button>
+ts file code:
+
+ngOnInit() {
+     this.invokeStripe();
+  }
+   paymentHandler:any = null;
+
+  initializePayment(amount: number) {
+    const paymentHandler = (<any>window).StripeCheckout.configure({
+      key: 'pk_test_sLUqHXtqXOkwSdPosC8ZikQ800snMatYMb',
+      locale: 'auto',
+      token: function (stripeToken: any) {
+        console.log({stripeToken})
+        alert('Stripe token generated!');
+      }
+    });
+  
+    paymentHandler.open({
+      name: 'Movie Show',
+      description: 'Book Your Seat for just '+this.Amount,
+      amount: amount * 100
+    });
+  }
+  
+  invokeStripe() {
+    if(!window.document.getElementById('stripe-script')) {
+      const script = window.document.createElement("script");
+      script.id = "stripe-script";
+      script.type = "text/javascript";
+      script.src = "https://checkout.stripe.com/checkout.js";
+      script.onload = () => {
+        this.paymentHandler = (<any>window).StripeCheckout.configure({
+          key: 'pk_test_sLUqHXtqXOkwSdPosC8ZikQ800snMatYMb',
+          locale: 'auto',
+          token: function (stripeToken: any) {
+            console.log(stripeToken)
+            alert('Payment has been successfull!');
+          }
+        });
+      }
+      window.document.body.appendChild(script);
+    }
+  }
+
+
+index.html script to be added:
+
+      script.src = "https://checkout.stripe.com/checkout.js";
